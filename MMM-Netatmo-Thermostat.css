@@ -1,0 +1,73 @@
+#NETATMO {
+  color: #EEE;
+  font-size: 15px;
+  width: 165px;
+}
+
+#NETATMO_NAME {
+  font-size: 18px;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+#NETATMO_TEMP {
+  border-radius: 15px;
+  font-size: 70px;
+  background: #000;
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: solid;
+  margin-bottom: 5px;
+}
+
+#NETATMO_TEMP.heating {
+  background: linear-gradient(to bottom,#e67e22 0,#ffae00 120%);
+}
+
+#NETATMO_VALUES {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#NETATMO_BATTERY,
+#NETATMO_RADIO,
+#NETATMO_FIRMWARE,
+#NETATMO_TEMPSET {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+}
+
+#NETATMO_RADIO_VALUE,
+#NETATMO_FIRMWARE_VALUE,
+#NETATMO_BATTERY_VALUE,
+#NETATMO_TEMPSET_VALUE {
+  margin-left: 6px;
+}
+
+#NETATMO_TEMP_TENDENCY {
+  font-size: 30px;
+  margin-left: -15px;
+  margin-bottom: -30px;
+}
+
+#NETATMO_RADIO_ICON,
+#NETATMO_FIRMWARE_ICON,
+#NETATMO_BATTERY_ICON,
+#NETATMO_TEMPSET_ICON {
+  font-size: small;
+}
+
+#NETATMO_NAME.hidden,
+#NETATMO_TEMPSET.hidden,
+#NETATMO_BATTERY.hidden,
+#NETATMO_FIRMWARE.hidden,
+#NETATMO_RADIO.hidden {
+  display: none;
+}
+
+
