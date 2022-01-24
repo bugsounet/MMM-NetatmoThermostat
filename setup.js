@@ -45,7 +45,7 @@ var api = new netatmo(auth)
 var getHomeData = function(err, data) {
   console.log("[NETATMO] Read result from Netatmo server (/homesdata Endpoint)...")
   data.homes.forEach(home => {
-    console.log("[NETATMO] home_id:", home.id, "(" + home.name + ")")
+    console.log("[NETATMO] --> home_id:", home.id, "(" + home.name + ")")
   })
   process.exit()
 }

@@ -5,6 +5,9 @@
   "main": "MMM-Netatmo-Thermostat.js",
   "author": "@bugsounet",
   "license": "MIT",
+  "scripts": {
+    "setup": "node setup"
+  },
   "dependencies": {
     "netatmo": "2.4.0"
   }
