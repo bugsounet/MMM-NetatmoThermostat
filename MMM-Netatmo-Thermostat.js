@@ -23,7 +23,8 @@ Module.register("MMM-Netatmo-Thermostat", {
       mode: true,
       battery: true,
       firmware: true,
-      signal: true
+      signal: true,
+      tendency: true
     }
   },
   requiresVersion: "2.18.0",
@@ -41,64 +42,66 @@ Module.register("MMM-Netatmo-Thermostat", {
 
     var temp = document.createElement("div")
     temp.id = "NETATMO_TEMP"
+      var zone1 = document.createElement("div")
+      zone1.id = "NETATMO_ZONE1"
+
+        var tempset = document.createElement("div")
+        tempset.id = "NETATMO_TEMPSET"
+        var tempsetIcon = document.createElement("div")
+        tempsetIcon.id= "NETATMO_TEMPSET_ICON"
+        tempset.appendChild(tempsetIcon)
+        var tempsetValue = document.createElement("div")
+        tempsetValue.id= "NETATMO_TEMPSET_VALUE"
+        tempset.appendChild(tempsetValue)
+      zone1.appendChild(tempset)
+
+        var firmware = document.createElement("div")
+        firmware.id = "NETATMO_FIRMWARE"
+        var firmwareIcon = document.createElement("div")
+        firmwareIcon.id = "NETATMO_FIRMWARE_ICON"
+        firmware.appendChild(firmwareIcon)
+        var firmwareValue = document.createElement("div")
+        firmwareValue.id = "NETATMO_FIRMWARE_VALUE"
+        firmware.appendChild(firmwareValue)
+      zone1.appendChild(firmware)
+
+    temp.appendChild(zone1)
+
     var tempValue = document.createElement("div")
     tempValue.id = "NETATMO_TEMP_VALUE"
+    tempValue.innerHTML = "<img src ='https://my.netatmo.com/images/common/logo_netatmo.svg' style='zoom: 150%'>"
     temp.appendChild(tempValue)
-    var tempTendency = document.createElement("div")
-    tempTendency.id = "NETATMO_TEMP_TENDENCY"
-    temp.appendChild(tempTendency)
+
+    var zone2 = document.createElement("div")
+    zone2.id = "NETATMO_ZONE2"
+
+      var battery = document.createElement("div")
+      battery.id = "NETATMO_BATTERY"
+      var batteryIcon = document.createElement("div")
+      batteryIcon.id = "NETATMO_BATTERY_ICON"
+      battery.appendChild(batteryIcon)
+      var batteryValue = document.createElement("div")
+      batteryValue.id = "NETATMO_BATTERY_VALUE"
+      battery.appendChild(batteryValue)
+    zone2.appendChild(battery)
+
+      var tempTendency = document.createElement("div")
+      tempTendency.id = "NETATMO_TEMP_TENDENCY"
+    zone2.appendChild(tempTendency)
+
+      var signal = document.createElement("div")
+      signal.id = "NETATMO_RADIO"
+      var signalIcon = document.createElement("div")
+      signalIcon.id = "NETATMO_RADIO_ICON"
+      signal.appendChild(signalIcon)
+      var signalValue = document.createElement("div")
+      signalValue.id = "NETATMO_RADIO_VALUE"
+      signal.appendChild(signalValue)
+    zone2.appendChild(signal)
+
+    temp.appendChild(zone2)
     wrapper.appendChild(temp)
 
-    var line1 = document.createElement("div") // display the first line values
-    line1.id = "NETATMO_VALUES"
-
-    var tempset = document.createElement("div")
-    tempset.id = "NETATMO_TEMPSET"
-    wrapper.appendChild(tempset)
-    var tempsetIcon = document.createElement("div")
-    tempsetIcon.id= "NETATMO_TEMPSET_ICON"
-    tempset.appendChild(tempsetIcon)
-    var tempsetValue = document.createElement("div")
-    tempsetValue.id= "NETATMO_TEMPSET_VALUE"
-    tempset.appendChild(tempsetValue)
-    line1.appendChild(tempset)
-
-    var battery = document.createElement("div")
-    battery.id = "NETATMO_BATTERY"
-    var batteryIcon = document.createElement("div")
-    batteryIcon.id = "NETATMO_BATTERY_ICON"
-    battery.appendChild(batteryIcon)
-
-    var batteryValue = document.createElement("div")
-    batteryValue.id = "NETATMO_BATTERY_VALUE"
-    battery.appendChild(batteryValue)
-
-    line1.appendChild(battery)
-
-    var line2 = document.createElement("div") // display the second line values
-    line2.id = "NETATMO_VALUES"
-    var firmware = document.createElement("div")
-    firmware.id = "NETATMO_FIRMWARE"
-    var firmwareIcon = document.createElement("div")
-    firmwareIcon.id = "NETATMO_FIRMWARE_ICON"
-    firmware.appendChild(firmwareIcon)
-    var firmwareValue = document.createElement("div")
-    firmwareValue.id = "NETATMO_FIRMWARE_VALUE"
-    firmware.appendChild(firmwareValue)
-    line2.appendChild(firmware)
-
-    var signal = document.createElement("div")
-    signal.id = "NETATMO_RADIO"
-    var signalIcon = document.createElement("div")
-    signalIcon.id = "NETATMO_RADIO_ICON"
-    signal.appendChild(signalIcon)
-    var signalValue = document.createElement("div")
-    signalValue.id = "NETATMO_RADIO_VALUE"
-    signal.appendChild(signalValue)
-    line2.appendChild(signal)
-
-    wrapper.appendChild(line1)
-    wrapper.appendChild(line2)
     return wrapper
   },
 
@@ -149,40 +152,50 @@ Module.register("MMM-Netatmo-Thermostat", {
     name.textContent = this.Thermostat.name
 
     tempValue.textContent = this.Thermostat.temp.toFixed(1) + "°"
-    tempTendency.className= this.tempTendency(this.Thermostat.temp, this.Thermostat.lastTemp)
-
-    if ((this.Thermostat.mode == "schedule") || (this.Thermostat.mode == "manual")) {
-      tempsetValue.textContent = this.Thermostat.tempSet + "°"
-    }
-    switch (this.Thermostat.mode) {
-      case "schedule":
-        tempsetIcon.className = "far fa-calendar-check"
-        break
-      case "manual":
-        tempsetIcon.className = "fas fa-hand-paper"
-        break
-      case "off":
-        tempsetIcon.className = "fas fa-power-off"
-        tempsetValue.textContent = "OFF"
-        break
-      case "max":
-        tempsetIcon.className = "fas fa-thermometer-full"
-        tempsetValue.textContent = "MAX"
-        break
+    if (this.config.display.tendency) {
+      tempTendency.className= this.tempTendency(this.Thermostat.temp, this.Thermostat.lastTemp)
     }
 
-    firmwareIcon.className= "fas fa-microchip"
-    firmwareValue.textContent = this.Thermostat.firmware
+    if (this.config.display.mode) {
+      if ((this.Thermostat.mode == "schedule") || (this.Thermostat.mode == "manual")) {
+        tempsetValue.textContent = this.Thermostat.tempSet + "°"
+      }
+      switch (this.Thermostat.mode) {
+        case "schedule":
+          tempsetIcon.className = "far fa-calendar-check"
+          break
+        case "manual":
+          tempsetIcon.className = "fas fa-hand-paper"
+          break
+        case "off":
+          tempsetIcon.className = "fas fa-power-off"
+          tempsetValue.textContent = "OFF"
+          break
+        case "max":
+          tempsetIcon.className = "fas fa-thermometer-full"
+          tempsetValue.textContent = "MAX"
+          break
+      }
+    }
 
-    signalIcon.className= "fas fa-signal"
-    signalValue.textContent = this.Thermostat.signal + "%"
+    if (this.config.display.firmware) {
+      firmwareIcon.className= "fas fa-microchip"
+      firmwareValue.textContent = this.Thermostat.firmware
+    }
 
-    batteryIcon.className = this.Thermostat.battery > 95 ? "fa fa-battery-full" :
-                            this.Thermostat.battery >= 70 ? "fa fa-battery-three-quarters" :
-                            this.Thermostat.battery >= 45 ? "fa fa-battery-half" :
-                            this.Thermostat.battery >= 15 ? "fa fa-battery-quarter" :
-                            "fa fa-battery-empty"
-    batteryValue.textContent = this.Thermostat.battery +"%"
+    if (this.config.display.signal) {
+      signalIcon.className= "fas fa-signal"
+      signalValue.textContent = this.Thermostat.signal + "%"
+    }
+
+    if (this.config.display.battery) {
+      batteryIcon.className = this.Thermostat.battery > 95 ? "fa fa-battery-full" :
+                              this.Thermostat.battery >= 70 ? "fa fa-battery-three-quarters" :
+                              this.Thermostat.battery >= 45 ? "fa fa-battery-half" :
+                              this.Thermostat.battery >= 15 ? "fa fa-battery-quarter" :
+                              "fa fa-battery-empty"
+      batteryValue.textContent = this.Thermostat.battery +"%"
+    }
 
     if (this.Thermostat.heating) temp.className = "heating"
     else temp.classList.remove("heating")
@@ -198,15 +211,34 @@ Module.register("MMM-Netatmo-Thermostat", {
 
   prepareDisplay: function() {
     var name = document.getElementById("NETATMO_NAME")
-    var mode = document.getElementById("NETATMO_TEMPSET")
-    var battery = document.getElementById("NETATMO_BATTERY")
-    var firmware = document.getElementById("NETATMO_FIRMWARE")
-    var signal = document.getElementById("NETATMO_RADIO")
+    var modeIcon = document.getElementById("NETATMO_TEMPSET_ICON")
+    var modeValue = document.getElementById("NETATMO_TEMPSET_VALUE")
+    var batteryIcon = document.getElementById("NETATMO_BATTERY_ICON")
+    var batteryValue = document.getElementById("NETATMO_BATTERY_VALUE")
+    var firmwareIcon = document.getElementById("NETATMO_FIRMWARE_ICON")
+    var firmwareValue = document.getElementById("NETATMO_FIRMWARE_VALUE")
+    var signalIcon = document.getElementById("NETATMO_RADIO_ICON")
+    var signalValue = document.getElementById("NETATMO_RADIO_VALUE")
+    var tempTendency = document.getElementById("NETATMO_TEMP_TENDENCY")
 
     if (!this.config.display.name) name.className= "hidden"
-    if (!this.config.display.mode) mode.className= "hidden"
-    if (!this.config.display.battery) battery.className = "hidden"
-    if (!this.config.display.firmware) firmware.className= "hidden"
-    if (!this.config.display.signal) signal.className = "hidden"
-  }
+    if (!this.config.display.mode) {
+      modeIcon.classList.add("hidden")
+      modeValue.className = "hidden"
+    }
+    if (!this.config.display.battery) {
+      batteryIcon.className = "hidden"
+      batteryValue.className = "hidden"
+    }
+    if (!this.config.display.firmware) {
+      firmwareIcon.className= "hidden"
+      firmwareValue.className= "hidden"
+    }
+    if (!this.config.display.signal) {
+      signalIcon.className = "hidden"
+      signalValue.className = "hidden"
+    }
+    if (this.config.display.tendency)
+      tempTendency.className = "hidden"
+    }
 });
