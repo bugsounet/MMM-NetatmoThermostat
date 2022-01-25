@@ -153,7 +153,7 @@ Module.register("MMM-Netatmo-Thermostat", {
 
     tempValue.textContent = this.Thermostat.temp.toFixed(1) + "°"
     if (this.config.display.tendency) {
-      tempTendency.className= this.tempTendency(this.Thermostat.temp, this.Thermostat.lastTemp)
+      tempTendency.className= this.tempTendency(this.Thermostat.tendency)
     }
 
     if (this.config.display.mode) {
@@ -201,11 +201,11 @@ Module.register("MMM-Netatmo-Thermostat", {
     else temp.classList.remove("heating")
   },
 
-  tempTendency: function(actual, old) {
+  tempTendency: function(tendency) {
     let icon
-    if (actual > old) icon = "fa fa-caret-up"
-    if (actual == old) icon = "fa fa-caret-right"
-    if (actual < old) icon = "fa fa-caret-down"
+    if (tendency == 1 ) icon = "fa fa-caret-up"
+    else if (tendency == 2) icon = "fa fa-caret-down"
+    else icon = "fa fa-caret-right"
     return icon
   },
 

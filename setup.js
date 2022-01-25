@@ -44,23 +44,29 @@ var api = new netatmo(auth)
 
 var getHomeData = function(err, data) {
   console.log("[NETATMO] Read result from Netatmo server (/homesdata Endpoint)...")
-  data.homes.forEach(home => {
-    console.log("[NETATMO] --> home_id:", home.id, "(" + home.name + ")")
-  })
+  if (data && data.homes.length) {
+    data.homes.forEach(home => {
+      console.log("[NETATMO] --> [" + home.name + "] home_id:", home.id)
+    })
+  } else {
+    console.error("[NETATMO] No datas !")
+    process.exit()
+  }
+  console.log("[NETATMO] Select your 'home_id' key and past it in your config.")
   process.exit()
 }
 
 api.on('get-homedata', getHomeData)
 
 api.on("error", function(error) {
-  console.error('[NETATMO] Netatmo threw an error: ' + error)
+  console.error('[NETATMO] Netatmo Servers threw an error: ' + error)
 })
 
 api.on("warning", function(error) {
-  console.log('[NETATMO] Netatmo threw a warning: ' + error)
+  console.warn('[NETATMO] Netatmo Servers threw a warning: ' + error)
 })
 
-api.on("authenticated", function (login) {
+api.on("authenticated", function () {
   console.log("[NETATMO] Authenticated!")
 })
 

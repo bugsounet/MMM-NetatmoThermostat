@@ -16,7 +16,7 @@ module.exports = NodeHelper.create({
       name: null,
       battery: null,
       temp: null,
-      lastTemp: null,
+      tendency: null,
       tempSet: null,
       heating: false,
       bridge: null,
@@ -24,6 +24,11 @@ module.exports = NodeHelper.create({
       mode: null,
       signal: null,
       firmware: null
+    }
+    this.tempHistory = {
+      data: [],
+      average: null,
+      lastAverage: null
     }
   },
 
@@ -68,11 +73,10 @@ module.exports = NodeHelper.create({
 
     var getHomeStatus = (err, data) => {
       logNT("HomeStatus:", data.home)
-      if (this.thermostat.temp) this.thermostat.lastTemp = this.thermostat.temp
-      else this.thermostat.lastTemp = data.home.rooms[this.config.room_id].therm_measured_temperature
       this.thermostat.temp = data.home.rooms[this.config.room_id].therm_measured_temperature
       this.thermostat.tempSet = data.home.rooms[this.config.room_id].therm_setpoint_temperature
       this.thermostat.mode = data.home.rooms[this.config.room_id].therm_setpoint_mode
+      this.thermostat.tendency = this.averageTemp(this.thermostat.temp)
       data.home.modules.forEach(module => {
         if (module.type == "NATherm1") {
           this.thermostat.bridge = module.bridge
@@ -85,20 +89,43 @@ module.exports = NodeHelper.create({
       api.getThermostatsData()
     }
 
+    var getHomeData = (err, data) => { console.log("HomeData:", data)}
+
     api.on('get-thermostatsdata', getThermostatsData)
     api.on('get-homestatus', getHomeStatus)
-
+    
     api.on("error", function(error) {
-      console.error('[NETATMO] threw an error: ' + error);
+      console.error('[NETATMO] threw an error: ' + error)
     })
     api.on("warning", function(error) {
-      console.log('[NETATMO] threw a warning: ' + error);
+      console.log('[NETATMO] threw a warning: ' + error)
     })
-    api.on("authenticated", function (login) { console.log("[NETATMO] Authenticated!")});
+    api.on("authenticated", function () { console.log("[NETATMO] Authenticated!")})
 
     api.homeStatus({ "home_id": this.config.home_id })
+
     setInterval(()=> {
       api.homeStatus({ "home_id": this.config.home_id })
     }, this.config.updateInterval*1000)
+  },
+
+  averageTemp: function(temp) {
+    if (!temp) return
+    let average = 0
+    /** do Array of last 10 Temp **/
+    if (this.tempHistory.data.length >= 10) this.tempHistory.data.splice(0,1)
+    this.tempHistory.data.push(temp)
+
+    /** do the average **/
+    this.tempHistory.data.forEach(value => {
+      average += value
+    })
+    average = (average/this.tempHistory.data.length).toFixed(2)
+    this.tempHistory.lastAverage = this.tempHistory.average ? this.tempHistory.average: average
+    this.tempHistory.average= average
+    logNT("tempHistory:", this.tempHistory)
+    if (this.tempHistory.average > this.tempHistory.lastAverage) return 1
+    if (this.tempHistory.average < this.tempHistory.lastAverage) return 2
+    return 0
   }
 });
