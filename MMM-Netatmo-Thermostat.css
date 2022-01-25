@@ -36,7 +36,7 @@
 #NETATMO_FIRMWARE {
   display: flex;
   flex-wrap: wrap;
-  width: 50px;
+  /*width: 50px;*/
   height: 50px;
   align-content: end;
   align-items: center;
@@ -55,7 +55,7 @@
 #NETATMO_TEMPSET {
   display: flex;
   flex-wrap: wrap;
-  width: 50px;
+ /* width: 50px; */
   height: 50px;
   align-content: start;
   align-items: center;
