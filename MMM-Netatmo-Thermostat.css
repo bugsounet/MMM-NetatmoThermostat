@@ -1,13 +1,17 @@
 #NETATMO {
   color: #EEE;
   font-size: 15px;
-  min-width: 265px;
+  min-width: 285px;
 }
 
+#NETATMO.fixed{
+  display: inline-block;
+}
+
+#NETATMO_EMPTY,
 #NETATMO_NAME {
-  font-size: 18px;
-  text-align: left;
-  margin-bottom: 10px;
+  font-size: 10px;
+  height: 15px;
 }
 
 #NETATMO_TEMP {
@@ -19,7 +23,6 @@
   align-items: center;
   justify-content: center;
   border: solid;
-  margin-bottom: 5px;
 }
 
 #NETATMO_TEMP.heating {
@@ -94,7 +97,6 @@
   font-size: small;
 }
 
-#NETATMO_NAME.hidden,
 #NETATMO_TEMPSET_ICON.hidden,
 #NETATMO_TEMPSET_VALUE.hidden,
 #NETATMO_BATTERY_ICON.hidden,
@@ -109,20 +111,29 @@
 
 #NETATMO_ZONE1 {
   font-size: small;
-  margin-left: 5px;
+  margin: 5px;
   flex: 1 1 0;
 }
 
 #NETATMO_ZONE2 {
   font-size: small;
-  margin-right: 5px;
+  margin: 5px;
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
   place-items: self-end;
 }
 
-#NETATMO_TEMP_VALUE {
+#NETATMO_ZONE3 {
   flex: 2 1 0;
   text-align: center;
+  margin: 5px;
+}
+
+#NETATMO_TEMP_VALUE {
+  text-align: center;
+  max-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

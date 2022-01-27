@@ -19,6 +19,7 @@ Module.register("MMM-Netatmo-Thermostat", {
     home_id: null,
     room_id: 0,
     display: {
+      fixed: false,
       name: true,
       mode: true,
       battery: true,
@@ -36,9 +37,6 @@ Module.register("MMM-Netatmo-Thermostat", {
   getDom: function() {
     var wrapper = document.createElement("div")
     wrapper.id = "NETATMO"
-    var name = document.createElement("div")
-    name.id = "NETATMO_NAME"
-    wrapper.appendChild(name)
 
     var temp = document.createElement("div")
     temp.id = "NETATMO_TEMP"
@@ -67,10 +65,23 @@ Module.register("MMM-Netatmo-Thermostat", {
 
     temp.appendChild(zone1)
 
-    var tempValue = document.createElement("div")
-    tempValue.id = "NETATMO_TEMP_VALUE"
-    tempValue.innerHTML = "<img src ='https://my.netatmo.com/images/common/logo_netatmo.svg' style='zoom: 150%'>"
-    temp.appendChild(tempValue)
+    var zone3 = document.createElement("div")
+      zone3.id = "NETATMO_ZONE3"
+
+      var name = document.createElement("div")
+      name.id = "NETATMO_NAME"
+      zone3.appendChild(name)
+
+      var tempValue = document.createElement("div")
+      tempValue.id = "NETATMO_TEMP_VALUE"
+      tempValue.innerHTML = "<img src ='https://my.netatmo.com/images/common/logo_netatmo.svg' style='zoom: 150%'>"
+      zone3.appendChild(tempValue)
+
+      var empty = document.createElement("div")
+      empty.id = "NETATMO_EMPTY"
+      zone3.appendChild(empty)
+
+    temp.appendChild(zone3)
 
     var zone2 = document.createElement("div")
     zone2.id = "NETATMO_ZONE2"
@@ -149,7 +160,7 @@ Module.register("MMM-Netatmo-Thermostat", {
     var firmwareIcon = document.getElementById("NETATMO_FIRMWARE_ICON")
     var firmwareValue = document.getElementById("NETATMO_FIRMWARE_VALUE")
 
-    name.textContent = this.Thermostat.name
+    if (this.config.display.name) name.textContent = this.Thermostat.name
 
     tempValue.textContent = this.Thermostat.temp.toFixed(1) + "°"
     if (this.config.display.tendency) {
@@ -210,7 +221,7 @@ Module.register("MMM-Netatmo-Thermostat", {
   },
 
   prepareDisplay: function() {
-    var name = document.getElementById("NETATMO_NAME")
+    var netatmo = document.getElementById("NETATMO")
     var modeIcon = document.getElementById("NETATMO_TEMPSET_ICON")
     var modeValue = document.getElementById("NETATMO_TEMPSET_VALUE")
     var batteryIcon = document.getElementById("NETATMO_BATTERY_ICON")
@@ -221,7 +232,10 @@ Module.register("MMM-Netatmo-Thermostat", {
     var signalValue = document.getElementById("NETATMO_RADIO_VALUE")
     var tempTendency = document.getElementById("NETATMO_TEMP_TENDENCY")
 
-    if (!this.config.display.name) name.className= "hidden"
+    if (this.config.display.fixed) {
+      netatmo.className = "fixed"
+    }
+
     if (!this.config.display.mode) {
       modeIcon.classList.add("hidden")
       modeValue.className = "hidden"
