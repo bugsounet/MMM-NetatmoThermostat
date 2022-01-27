@@ -46,7 +46,7 @@ var getHomeData = function(err, data) {
   console.log("[NETATMO] Read result from Netatmo server (/homesdata Endpoint)...")
   if (data && data.homes.length) {
     data.homes.forEach(home => {
-      console.log("[NETATMO] --> [" + home.name + "] home_id:", home.id)
+      console.log("[NETATMO] --> [" + home.name + "] home_id:", `"` + home.id + `",`)
     })
   } else {
     console.error("[NETATMO] No datas !")
