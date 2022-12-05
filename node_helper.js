@@ -30,6 +30,7 @@ module.exports = NodeHelper.create({
       average: null,
       lastAverage: null
     }
+    this.Authenticated = false
   },
 
   socketNotificationReceived: function (noti, payload) {
@@ -73,19 +74,21 @@ module.exports = NodeHelper.create({
 
     var getHomeStatus = (err, data) => {
       logNT("HomeStatus:", data.home)
-      this.thermostat.temp = data.home.rooms[this.config.room_id].therm_measured_temperature
-      this.thermostat.tempSet = data.home.rooms[this.config.room_id].therm_setpoint_temperature
-      this.thermostat.mode = data.home.rooms[this.config.room_id].therm_setpoint_mode
-      this.thermostat.tendency = this.averageTemp(this.thermostat.temp)
-      data.home.modules.forEach(module => {
-        if (module.type == "NATherm1") {
-          this.thermostat.bridge = module.bridge
-          this.thermostat.id = module.id
-          this.thermostat.heating = module.boiler_status
-          this.thermostat.firmware = module.firmware_revision
-          this.thermostat.signal = module.rf_strength
-        }
-      })
+      if (data.home.rooms) {
+        this.thermostat.temp = data.home.rooms[this.config.room_id].therm_measured_temperature
+        this.thermostat.tempSet = data.home.rooms[this.config.room_id].therm_setpoint_temperature
+        this.thermostat.mode = data.home.rooms[this.config.room_id].therm_setpoint_mode
+        this.thermostat.tendency = this.averageTemp(this.thermostat.temp)
+        data.home.modules.forEach(module => {
+          if (module.type == "NATherm1") {
+            this.thermostat.bridge = module.bridge
+            this.thermostat.id = module.id
+            this.thermostat.heating = module.boiler_status
+            this.thermostat.firmware = module.firmware_revision
+            this.thermostat.signal = module.rf_strength
+          }
+        })
+      } else console.error("[NETATMO] no rooms found!", data.home)
       api.getThermostatsData()
     }
 
@@ -94,18 +97,24 @@ module.exports = NodeHelper.create({
     api.on('get-thermostatsdata', getThermostatsData)
     api.on('get-homestatus', getHomeStatus)
     
-    api.on("error", function(error) {
+    api.on("error", error => {
       console.error('[NETATMO] threw an error: ' + error)
     })
-    api.on("warning", function(error) {
+    api.on("warning", error => {
       console.log('[NETATMO] threw a warning: ' + error)
     })
-    api.on("authenticated", function () { console.log("[NETATMO] Authenticated!")})
+    api.on("authenticated", () => {
+      console.log("[NETATMO] Authenticated!")
+      this.Authenticated = true
+    })
 
     api.homeStatus({ "home_id": this.config.home_id })
 
     setInterval(()=> {
-      api.homeStatus({ "home_id": this.config.home_id })
+      if (this.Authenticated) { // auth only ?
+        logNT("Updating...")
+        api.homeStatus({ "home_id": this.config.home_id })
+      }
     }, this.config.updateInterval*1000)
   },
 
