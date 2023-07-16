@@ -1,6 +1,6 @@
 {
   "name": "MMM-Netatmo-Thermostat",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Display Netatmo Thermostat State in MagicMirror",
   "main": "MMM-Netatmo-Thermostat.js",
   "author": "@bugsounet",
@@ -9,6 +9,6 @@
     "setup": "node setup"
   },
   "dependencies": {
-    "netatmo": "2.4.0"
+    "request": "^2.88.2"
   }
 }

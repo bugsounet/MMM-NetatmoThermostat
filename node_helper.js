@@ -6,7 +6,7 @@
  */
 
 var NodeHelper = require("node_helper")
-var netatmo = require('netatmo')
+var netatmo = require('./netatmo')
 
 logNT = (...args) => { /* do nothing ! */ }
 
@@ -51,8 +51,8 @@ module.exports = NodeHelper.create({
     var auth = {
       client_id: this.config.client_id,
       client_secret: this.config.client_secret,
-      username: this.config.username,
-      password: this.config.password
+      access_token: this.config.access_token,
+      refresh_token: this.config.refresh_token
     }
     var api = new netatmo(auth)
 
