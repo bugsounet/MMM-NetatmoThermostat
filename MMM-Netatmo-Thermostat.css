@@ -1,7 +1,7 @@
 #NETATMO {
   color: #EEE;
   font-size: 15px;
-  min-width: 285px;
+  width: 285px;
 }
 
 #NETATMO.fixed{

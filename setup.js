@@ -3,7 +3,7 @@
 
 const fs = require("fs")
 const path = require("path")
-var netatmo = require('netatmo')
+var netatmo = require('./netatmo')
 
 console.log("[NETATMO] Search config.js file...")
 let file = path.resolve(__dirname, "../../config/config.js")
@@ -24,14 +24,14 @@ for (let [nb, module] of Object.entries(MMModules)) {
     found = true
     if (!module.config.client_id) return console.log("client_id not defined in config.js")
     if (!module.config.client_secret) return console.log("client_secret not defined in config.js")
-    if (!module.config.username) return console.log("username not defined in config.js")
-    if (!module.config.password) return console.log("password not defined in config.js")
+    //if (!module.config.username) return console.log("username not defined in config.js")
+    //if (!module.config.password) return console.log("password not defined in config.js")
     console.log("[NETATMO] All needed value are there, perfect!")
     var auth = {
       "client_id": module.config.client_id,
       "client_secret": module.config.client_secret,
-      "username": module.config.username,
-      "password": module.config.password,
+      "access_token": module.config.access_token,
+      "refresh_token": module.config.refresh_token
     }
   }
   else if (!found) console.log("[NETATMO] Skip:", module.module)

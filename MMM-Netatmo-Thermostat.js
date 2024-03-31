@@ -74,7 +74,7 @@ Module.register("MMM-Netatmo-Thermostat", {
 
       var tempValue = document.createElement("div")
       tempValue.id = "NETATMO_TEMP_VALUE"
-      tempValue.innerHTML = "<img src ='https://my.netatmo.com/images/common/logo_netatmo.svg' style='zoom: 150%'>"
+      tempValue.innerHTML = "<img src ='modules/MMM-Netatmo-Thermostat/netatmo-logo.png' style='width: 200px;'>"
       zone3.appendChild(tempValue)
 
       var empty = document.createElement("div")
