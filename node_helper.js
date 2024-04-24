@@ -1,7 +1,7 @@
-/* Magic Mirror
+/*
  * Node Helper: MMM-Netatmo-Thermostat
  *
- * By bugsounet ©2022
+ * By bugsounet ©2024
  * MIT Licensed.
  */
 
@@ -11,7 +11,7 @@ var netatmo = require('./netatmo')
 logNT = (...args) => { /* do nothing ! */ }
 
 module.exports = NodeHelper.create({
-  start: function () {
+  start () {
     this.thermostat= {
       name: null,
       battery: null,
@@ -31,9 +31,10 @@ module.exports = NodeHelper.create({
       lastAverage: null
     }
     this.Authenticated = false
+    this.api = null
   },
 
-  socketNotificationReceived: function (noti, payload) {
+  socketNotificationReceived (noti, payload) {
     switch (noti) {
       case "INIT":
         console.log("[NETATMO] MMM-Netatmo-Thermostat Version:", require('./package.json').version)
@@ -42,83 +43,74 @@ module.exports = NodeHelper.create({
     }
   },
 
-  initialize: function (config) {
+  initialize (config) {
     this.config = config
     if (this.config.debug) logNT = (...args) => { console.log("[NETATMO]", ...args) }
     if (!this.config.home_id) return console.error("[NETATMO] home_id not set!")
-    console.log("[NETATMO] Starting Netatmo module...")
+    console.log("[NETATMO] Starting MMM-Netatmo-Thermostat module...")
     logNT(this.config)
-    var auth = {
-      client_id: this.config.client_id,
-      client_secret: this.config.client_secret,
-      access_token: this.config.access_token,
-      refresh_token: this.config.refresh_token
-    }
-    var api = new netatmo(auth)
-
-    var getThermostatsData = (err, devices) => {
-      logNT("ThermostatsData:", devices)
-      devices.forEach(device => {
-        if (device._id == this.thermostat.bridge) { // select Relay
-          device.modules.forEach(moduleData => {
-            if (moduleData._id == this.thermostat.id) { // select Thermostat
-              this.thermostat.battery = moduleData.battery_percent
-              this.thermostat.name = moduleData.module_name
-            }
-          })
-        }
+    this.api = new netatmo(this.config.api)
+    this.api
+      .on('get-thermostatsdata', (err, devices) => this.getThermostatsData(err, devices))
+      .on('get-homestatus', (err, data) => this.getHomeStatus(err, data))
+      .on("error", error => {
+        console.error('[NETATMO] threw an error: ' + error)
       })
-      logNT("Final Result:", this.thermostat)
-      this.sendSocketNotification("DATA", this.thermostat)
-    }
+      .on("warning", error => {
+        console.log('[NETATMO] threw a warning: ' + error)
+      })
+      .on("authenticated", () => {
+        console.log("[NETATMO] Authenticated!")
+        this.Authenticated = true
+      })
 
-    var getHomeStatus = (err, data) => {
-      logNT("HomeStatus:", data.home)
-      if (data.home.rooms) {
-        this.thermostat.temp = data.home.rooms[this.config.room_id].therm_measured_temperature
-        this.thermostat.tempSet = data.home.rooms[this.config.room_id].therm_setpoint_temperature
-        this.thermostat.mode = data.home.rooms[this.config.room_id].therm_setpoint_mode
-        this.thermostat.tendency = this.averageTemp(this.thermostat.temp)
-        data.home.modules.forEach(module => {
-          if (module.type == "NATherm1") {
-            this.thermostat.bridge = module.bridge
-            this.thermostat.id = module.id
-            this.thermostat.heating = module.boiler_status
-            this.thermostat.firmware = module.firmware_revision
-            this.thermostat.signal = module.rf_strength
-          }
-        })
-      } else console.error("[NETATMO] no rooms found!", data.home)
-      api.getThermostatsData()
-    }
-
-    var getHomeData = (err, data) => { console.log("HomeData:", data)}
-
-    api.on('get-thermostatsdata', getThermostatsData)
-    api.on('get-homestatus', getHomeStatus)
-    
-    api.on("error", error => {
-      console.error('[NETATMO] threw an error: ' + error)
-    })
-    api.on("warning", error => {
-      console.log('[NETATMO] threw a warning: ' + error)
-    })
-    api.on("authenticated", () => {
-      console.log("[NETATMO] Authenticated!")
-      this.Authenticated = true
-    })
-
-    api.homeStatus({ "home_id": this.config.home_id })
+    this.api.homeStatus({ "home_id": this.config.home_id })
 
     setInterval(()=> {
       if (this.Authenticated) { // auth only ?
         logNT("Updating...")
-        api.homeStatus({ "home_id": this.config.home_id })
+        this.api.homeStatus({ "home_id": this.config.home_id })
       }
-    }, this.config.updateInterval*1000)
+    }, this.config.updateInterval)
   },
 
-  averageTemp: function(temp) {
+  getThermostatsData (err, devices) {
+    logNT("ThermostatsData:", devices)
+    devices.forEach(device => {
+      if (device._id == this.thermostat.bridge) { // select Relay
+        device.modules.forEach(moduleData => {
+          if (moduleData._id == this.thermostat.id) { // select Thermostat
+            this.thermostat.battery = moduleData.battery_percent
+            this.thermostat.name = moduleData.module_name
+          }
+        })
+      }
+    })
+    logNT("Final Result:", this.thermostat)
+    this.sendSocketNotification("DATA", this.thermostat)
+  },
+
+  getHomeStatus (err, data) {
+    logNT("HomeStatus:", data.home)
+    if (data.home.rooms.length && data.home.rooms.length-1 >= this.config.room_id) {
+      this.thermostat.temp = data.home.rooms[this.config.room_id].therm_measured_temperature
+      this.thermostat.tempSet = data.home.rooms[this.config.room_id].therm_setpoint_temperature
+      this.thermostat.mode = data.home.rooms[this.config.room_id].therm_setpoint_mode
+      this.thermostat.tendency = this.averageTemp(this.thermostat.temp)
+      data.home.modules.forEach(module => {
+        if (module.type == "NATherm1") {
+          this.thermostat.bridge = module.bridge
+          this.thermostat.id = module.id
+          this.thermostat.heating = module.boiler_status
+          this.thermostat.firmware = module.firmware_revision
+          this.thermostat.signal = module.rf_strength
+        }
+      })
+    } else console.error("[NETATMO] no rooms found!", data.home)
+    this.api.getThermostatsData()
+  },
+
+  averageTemp (temp) {
     if (!temp) return
     let average = 0
     /** do Array of last 10 Temp **/

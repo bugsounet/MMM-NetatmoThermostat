@@ -1,3 +1,9 @@
+/*
+ * from https://github.com/karbassi/netatmo
+ * adapted for MMM-Netatmo-Thermostat
+ * bugsounet 2024
+ */
+
 var util = require('util');
 var EventEmitter = require("events").EventEmitter;
 var request = require('request');
@@ -5,8 +11,6 @@ var moment = require('moment');
 
 const BASE_URL = 'https://api.netatmo.net';
 
-var username;
-var password;
 var client_id;
 var client_secret;
 var access_token;

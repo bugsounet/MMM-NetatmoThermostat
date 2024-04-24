@@ -22,19 +22,13 @@ for (let [nb, module] of Object.entries(MMModules)) {
   if (module.module == "MMM-Netatmo-Thermostat") {
     console.log("[NETATMO] Found:", module.module)
     found = true
-    if (!module.config.client_id) return console.log("client_id not defined in config.js")
-    if (!module.config.client_secret) return console.log("client_secret not defined in config.js")
+    if (!module.config.api.client_id) return console.log("client_id not defined in config.js")
+    if (!module.config.api.client_secret) return console.log("client_secret not defined in config.js")
     //if (!module.config.username) return console.log("username not defined in config.js")
     //if (!module.config.password) return console.log("password not defined in config.js")
     console.log("[NETATMO] All needed value are there, perfect!")
-    var auth = {
-      "client_id": module.config.client_id,
-      "client_secret": module.config.client_secret,
-      "access_token": module.config.access_token,
-      "refresh_token": module.config.refresh_token
-    }
+    var auth = module.config.api
   }
-  else if (!found) console.log("[NETATMO] Skip:", module.module)
 }
 if (!found) return console.log("MMM-Netatmo-Thermostat not configured in config.js")
 
@@ -56,18 +50,16 @@ var getHomeData = function(err, data) {
   process.exit()
 }
 
-api.on('get-homedata', getHomeData)
-
-api.on("error", function(error) {
-  console.error('[NETATMO] Netatmo Servers threw an error: ' + error)
-})
-
-api.on("warning", function(error) {
-  console.warn('[NETATMO] Netatmo Servers threw a warning: ' + error)
-})
-
-api.on("authenticated", function () {
-  console.log("[NETATMO] Authenticated!")
-})
+api
+  .on('get-homedata', getHomeData)
+  .on("error", function(error) {
+    console.error('[NETATMO] Netatmo Servers threw an error: ' + error)
+  })
+  .on("warning", function(error) {
+    console.warn('[NETATMO] Netatmo Servers threw a warning: ' + error)
+  })
+  .on("authenticated", function () {
+    console.log("[NETATMO] Authenticated!")
+  })
 
 api.getHomeData()

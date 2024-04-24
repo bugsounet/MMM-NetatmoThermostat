@@ -1,21 +1,22 @@
-#NETATMO {
+.MMM-Netatmo-Thermostat .hidden {
+  display: none;
+}
+
+.MMM-Netatmo-Thermostat #NETATMO {
   color: #EEE;
   font-size: 15px;
   width: 285px;
-}
-
-#NETATMO.fixed{
   display: inline-block;
 }
 
-#NETATMO_EMPTY,
-#NETATMO_NAME {
+.MMM-Netatmo-Thermostat #NETATMO_EMPTY,
+.MMM-Netatmo-Thermostat #NETATMO_NAME {
   font-size: 10px;
   height: 15px;
 }
 
-#NETATMO_TEMP {
-  border-radius: 15px;
+.MMM-Netatmo-Thermostat #NETATMO_TEMP {
+  border-radius: 10px;
   font-size: 70px;
   background: #000;
   color: #FFF;
@@ -25,18 +26,18 @@
   border: solid;
 }
 
-#NETATMO_TEMP.heating {
+.MMM-Netatmo-Thermostat #NETATMO_TEMP.heating {
   background: linear-gradient(to bottom,#e67e22 0,#ffae00 120%);
   color: #000;
 }
 
-#NETATMO_VALUES {
+.MMM-Netatmo-Thermostat #NETATMO_VALUES {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-#NETATMO_FIRMWARE {
+.MMM-Netatmo-Thermostat #NETATMO_FIRMWARE {
   display: flex;
   flex-wrap: wrap;
   /*width: 50px;*/
@@ -45,7 +46,7 @@
   align-items: center;
 }
 
-#NETATMO_RADIO {
+.MMM-Netatmo-Thermostat #NETATMO_RADIO {
   display: flex;
   flex-wrap: wrap;
   /*width: 50px;*/
@@ -55,7 +56,7 @@
   justify-content: space-between;
 }
 
-#NETATMO_TEMPSET {
+.MMM-Netatmo-Thermostat #NETATMO_TEMPSET {
   display: flex;
   flex-wrap: wrap;
  /* width: 50px; */
@@ -64,7 +65,7 @@
   align-items: center;
 }
 
-#NETATMO_BATTERY {
+.MMM-Netatmo-Thermostat #NETATMO_BATTERY {
   justify-content: flex-start;
   display: flex;
   flex-wrap: wrap;
@@ -75,14 +76,14 @@
   justify-content: space-between;
 }
 
-#NETATMO_RADIO_VALUE,
-#NETATMO_FIRMWARE_VALUE,
-#NETATMO_BATTERY_VALUE,
-#NETATMO_TEMPSET_VALUE {
+.MMM-Netatmo-Thermostat #NETATMO_RADIO_VALUE,
+.MMM-Netatmo-Thermostat #NETATMO_FIRMWARE_VALUE,
+.MMM-Netatmo-Thermostat #NETATMO_BATTERY_VALUE,
+.MMM-Netatmo-Thermostat #NETATMO_TEMPSET_VALUE {
   margin-left: 5px;
 }
 
-#NETATMO_TEMP_TENDENCY {
+.MMM-Netatmo-Thermostat #NETATMO_TEMP_TENDENCY {
   font-size: 30px;
   width: 20px;
   height: 30px;
@@ -90,49 +91,37 @@
   place-content: flex-start;
 }
 
-#NETATMO_RADIO_ICON,
-#NETATMO_FIRMWARE_ICON,
-#NETATMO_BATTERY_ICON,
-#NETATMO_TEMPSET_ICON {
+.MMM-Netatmo-Thermostat #NETATMO_RADIO_ICON,
+.MMM-Netatmo-Thermostat #NETATMO_FIRMWARE_ICON,
+.MMM-Netatmo-Thermostat #NETATMO_BATTERY_ICON,
+.MMM-Netatmo-Thermostat #NETATMO_TEMPSET_ICON {
   font-size: small;
 }
 
-#NETATMO_TEMPSET_ICON.hidden,
-#NETATMO_TEMPSET_VALUE.hidden,
-#NETATMO_BATTERY_ICON.hidden,
-#NETATMO_BATTERY_VALUE.hidden,
-#NETATMO_FIRMWARE_ICON.hidden,
-#NETATMO_FIRMWARE_VALUE.hidden,
-#NETATMO_RADIO_ICON.hidden,
-#NETATMO_RADIO_VALUE.hidden,
-#NETATMO_TEMP_TENDENCY.hidden {
-  display: none;
-}
-
-#NETATMO_ZONE1 {
+.MMM-Netatmo-Thermostat #NETATMO_ZONE1 {
   font-size: small;
-  margin: 5px;
+  padding: 5px;
   flex: 1 1 0;
 }
 
-#NETATMO_ZONE2 {
+.MMM-Netatmo-Thermostat #NETATMO_ZONE3 {
   font-size: small;
-  margin: 5px;
+  padding: 5px;
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
   place-items: self-end;
 }
 
-#NETATMO_ZONE3 {
+.MMM-Netatmo-Thermostat #NETATMO_ZONE2 {
   flex: 2 1 0;
   text-align: center;
-  margin: 5px;
+  padding: 5px;
 }
 
-#NETATMO_TEMP_VALUE {
+.MMM-Netatmo-Thermostat #NETATMO_TEMP_VALUE {
   text-align: center;
-  max-height: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
