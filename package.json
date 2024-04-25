@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "rev": "240425",
   "description": "Display Netatmo Thermostat State in MagicMirror²",
-  "main": "MMM-Netatmo-Thermostat.js",
+  "main": "MMM-NetatmoThermostat.js",
   "scripts": {
     "preinstall": "installer/preinstall.sh",
     "postinstall": "installer/postinstall.sh",
