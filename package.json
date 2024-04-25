@@ -14,7 +14,7 @@
     "lint:fix": "eslint *.js installer/*.js components/*.js --config eslint.config.js --fix",
     "test": "npm run lint",
     "test:minify": "cd installer && node minify.js",
-    "setup": "node setup"
+    "setup": "node --no-deprecation installer/setup"
   },
   "keywords": [
     "netatmo",

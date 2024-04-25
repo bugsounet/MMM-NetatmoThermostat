@@ -6,6 +6,7 @@
  */
 
 var NodeHelper = require("node_helper");
+var moment = require("moment");
 var netatmo = require("./components/netatmo.js");
 
 logNT = (...args) => { /* do nothing ! */ };
@@ -13,17 +14,18 @@ logNT = (...args) => { /* do nothing ! */ };
 module.exports = NodeHelper.create({
   start () {
     this.thermostat= {
-      name: null,
-      battery: null,
+      name: "NATherm1",
+      batteryState: null,
       temp: null,
       tendency: null,
       tempSet: null,
       heating: false,
-      bridge: null,
       id: null,
       mode: null,
-      signal: null,
-      firmware: null
+      signal: 0,
+      //signalState: null,
+      signalPercent: 0,
+      firmware: 0
     };
     this.tempHistory = {
       data: [],
@@ -51,17 +53,24 @@ module.exports = NodeHelper.create({
     logNT(this.config);
     this.api = new netatmo(this.config.api);
     this.api
-      .on("get-thermostatsdata", (err, devices) => this.getThermostatsData(err, devices))
       .on("get-homestatus", (err, data) => this.getHomeStatus(err, data))
+      .on("get-homesdata", (err, data) => this.getHomesData(err,data))
       .on("error", (error) => {
-        console.error(`[NETATMO] threw an error: ${  error}`);
+        console.error(`[NETATMO] threw an error: ${error}`);
       })
       .on("warning", (error) => {
-        console.log(`[NETATMO] threw a warning: ${  error}`);
+        console.warn(`[NETATMO] threw a warning: ${error}`);
       })
-      .on("authenticated", () => {
+      .on("authenticated", (expire) => {
         console.log("[NETATMO] Authenticated!");
+        let expire_at = moment(Date.now() + (expire*1000)).format("LLLL");
+        console.log("[NETATMO] Token Expire" , expire_at);
         this.Authenticated = true;
+      })
+      .on("refreshed", (expire) => {
+        console.log("[NETATMO] Token refreshed!");
+        let expire_at = moment(Date.now() + (expire*1000)).format("LLLL");
+        console.log("[NETATMO] New Token Expire" , expire_at);
       });
 
     this.api.homeStatus({ home_id: this.config.home_id });
@@ -74,22 +83,6 @@ module.exports = NodeHelper.create({
     }, this.config.updateInterval);
   },
 
-  getThermostatsData (err, devices) {
-    if (this.config.verbose) logNT("ThermostatsData:", devices);
-    devices.forEach((device) => {
-      if (device._id === this.thermostat.bridge) { // select Relay
-        device.modules.forEach((moduleData) => {
-          if (moduleData._id === this.thermostat.id) { // select Thermostat
-            this.thermostat.battery = moduleData.battery_percent;
-            this.thermostat.name = moduleData.module_name;
-          }
-        });
-      }
-    });
-    logNT("Final Result:", this.thermostat);
-    this.sendSocketNotification("DATA", this.thermostat);
-  },
-
   getHomeStatus (err, data) {
     if (this.config.verbose) logNT("HomeStatus:", data.home);
     if (data.home.rooms.length && data.home.rooms.length-1 >= this.config.room_id) {
@@ -99,15 +92,40 @@ module.exports = NodeHelper.create({
       this.thermostat.tendency = this.averageTemp(this.thermostat.temp);
       data.home.modules.forEach((module) => {
         if (module.type === "NATherm1") {
-          this.thermostat.bridge = module.bridge;
           this.thermostat.id = module.id;
           this.thermostat.heating = module.boiler_status;
-          this.thermostat.firmware = module.firmware_revision;
           this.thermostat.signal = module.rf_strength;
+          this.thermostat.signalPercent = this.signalPercent(this.thermostat.signal);
+          //this.thermostat.signalState = (this.thermostat.signal < 60 ? "full" : this.thermostat.signal < 70 ? "high" : this.thermostat.signal < 80 ? "medium" : "low") || null
+          this.thermostat.firmware = module.firmware_revision;
+          this.thermostat.batteryState = module.battery_state;
+          this.api.getHomesData({ home_id: this.config.home_id });
         }
       });
     } else console.error("[NETATMO] no rooms found!", data.home);
-    this.api.getThermostatsData();
+  },
+
+  signalPercent (value) {
+    if (isNaN(value)) return 0;
+    const min = 50;
+    const max = 90;
+    var percent = 100 - ((value - min)/(max-min)) * 100;
+    if (percent > 100) percent = 100;
+    if (percent < 0) percent = 0;
+    const result = parseInt(percent.toFixed(0));
+    return result;
+  },
+
+  getHomesData (err,data) {
+    if (this.config.verbose) logNT("getHomesData:", data);
+    const home = data.homes[0];
+    home?.modules.forEach((module) => {
+      if (module.type === "NATherm1" && module.id === this.thermostat.id) {
+        this.thermostat.name = module.name;
+      }
+    });
+    logNT("Final Result:", this.thermostat);
+    this.sendSocketNotification("DATA", this.thermostat);
   },
 
   averageTemp (temp) {

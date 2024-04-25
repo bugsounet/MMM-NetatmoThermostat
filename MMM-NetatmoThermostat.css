@@ -6,7 +6,7 @@
   #NETATMO {
     color: #EEE;
     font-size: 15px;
-    width: 285px;
+    width: 290px;
     display: inline-block;
   }
 
@@ -16,7 +16,7 @@
     height: 15px;
   }
 
-  #NETATMO_TEMP {
+  #NETATMO_THERMOSTAT {
     border-radius: 10px;
     font-size: 70px;
     background: #000;
@@ -27,7 +27,7 @@
     border: solid;
   }
 
-  #NETATMO_TEMP.heating {
+  #NETATMO_THERMOSTAT.heating {
     background: linear-gradient(to bottom,#e67e22 0,#ffae00 120%);
     color: #000;
   }
@@ -41,7 +41,6 @@
   #NETATMO_FIRMWARE {
     display: flex;
     flex-wrap: wrap;
-    /*width: 50px;*/
     height: 50px;
     align-content: end;
     align-items: center;
@@ -50,7 +49,6 @@
   #NETATMO_RADIO {
     display: flex;
     flex-wrap: wrap;
-    /*width: 50px;*/
     height: 35px;
     align-content: end;
     align-items: center;
@@ -60,7 +58,6 @@
   #NETATMO_TEMPSET {
     display: flex;
     flex-wrap: wrap;
-   /* width: 50px; */
     height: 50px;
     align-content: start;
     align-items: center;
@@ -70,7 +67,6 @@
     justify-content: flex-start;
     display: flex;
     flex-wrap: wrap;
-    /*width: 50px;*/
     height: 35px;
     align-content: start;
     align-items: center;
@@ -79,7 +75,6 @@
 
   #NETATMO_RADIO_VALUE,
   #NETATMO_FIRMWARE_VALUE,
-  #NETATMO_BATTERY_VALUE,
   #NETATMO_TEMPSET_VALUE {
     margin-left: 5px;
   }
@@ -97,6 +92,11 @@
   #NETATMO_BATTERY_ICON,
   #NETATMO_TEMPSET_ICON {
     font-size: small;
+  }
+
+  #NETATMO_BATTERY_ICON {
+    font-size: small;
+    margin-top: 3px;
   }
 
   #NETATMO_ZONE1 {

@@ -1,65 +1,77 @@
-/** MMM-Netatmo-Thermostat search home_id **/
+/** MMM-NetatmoThermostat search home_id **/
 /** @bugsounet **/
 
-const fs = require("fs")
-const path = require("path")
-var netatmo = require('./netatmo')
+const fs = require("fs");
+const path = require("path");
+var netatmo = require("../components/netatmo.js");
 
-console.log("[NETATMO] Search config.js file...")
-let file = path.resolve(__dirname, "../../config/config.js")
-let found = false
-let config = {}
+let file = path.resolve(__dirname, "../../../config/config.js");
+let found = false;
+let config = {};
 
 if (fs.existsSync(file)) {
-  var MMConfig = require(file)
-  var MMModules = MMConfig.modules
+  var MMConfig = require(file);
+  var MMModules = MMConfig.modules;
+} else {
+  console.log("[NETATMO] config.js not found !?");
+  process.exit();
 }
-else return console.log("[NETATMO] config.js not found !?")
-console.log("[NETATMO] Found config.js !")
-console.log("[NETATMO] Search MMM-Netatmo-Thermostat...")
 
 for (let [nb, module] of Object.entries(MMModules)) {
-  if (module.module == "MMM-Netatmo-Thermostat") {
-    console.log("[NETATMO] Found:", module.module)
-    found = true
-    if (!module.config.api.client_id) return console.log("client_id not defined in config.js")
-    if (!module.config.api.client_secret) return console.log("client_secret not defined in config.js")
-    //if (!module.config.username) return console.log("username not defined in config.js")
-    //if (!module.config.password) return console.log("password not defined in config.js")
-    console.log("[NETATMO] All needed value are there, perfect!")
-    var auth = module.config.api
+  if (module.module === "MMM-NetatmoThermostat") {
+    if (!module.config.api.client_id) {
+      console.log("client_id not defined in config.js");
+      process.exit();
+    }
+    if (!module.config.api.client_secret) {
+      console.log("client_secret not defined in config.js");
+      process.exit();
+    }
+    if (!module.config.api.refresh_token) {
+      console.log("refresh_token not defined in config.js");
+      process.exit();
+    }
+    found = true;
+    var auth = module.config.api;
   }
 }
-if (!found) return console.log("MMM-Netatmo-Thermostat not configured in config.js")
-
-console.log("[NETATMO] Try to login to Netatmo Servers...")
-
-var api = new netatmo(auth)
-
-var getHomeData = function(err, data) {
-  console.log("[NETATMO] Read result from Netatmo server (/homesdata Endpoint)...")
-  if (data && data.homes.length) {
-    data.homes.forEach(home => {
-      console.log("[NETATMO] --> [" + home.name + "] home_id:", `"` + home.id + `",`)
-    })
-  } else {
-    console.error("[NETATMO] No datas !")
-    process.exit()
-  }
-  console.log("[NETATMO] Select your 'home_id' key and past it in your config.")
-  process.exit()
+if (!found) {
+  console.log("MMM-NetatmoThermostat not configured in config.js");
+  process.exit();
 }
+
+console.log("[NETATMO] Try to login to Netatmo Servers...");
+
+var api = new netatmo(auth);
 
 api
-  .on('get-homedata', getHomeData)
-  .on("error", function(error) {
-    console.error('[NETATMO] Netatmo Servers threw an error: ' + error)
+  .on("get-homesdata", (err, data) => {
+    let found = false;
+    if (data?.homes.length) {
+      data.homes.forEach((home) => {
+        home?.modules.forEach((module) => {
+          if (module.type === "NATherm1") {
+            console.log(`[NETATMO] --> [${home.name} - ${module.name}] home_id: "${home.id}",`);
+            found = true;
+          }
+        });
+      });
+    } else {
+      console.error("[NETATMO] No datas !");
+      process.exit();
+    }
+    if (found) console.log("\n[NETATMO] Select your 'home_id' key and past it in your config.");
+    else console.log("[NETATMO] No Thermostat found.");
+    process.exit();
   })
-  .on("warning", function(error) {
-    console.warn('[NETATMO] Netatmo Servers threw a warning: ' + error)
+  .on("error", (error) => {
+    console.error(`[NETATMO] Netatmo Servers threw an error: ${error}`);
   })
-  .on("authenticated", function () {
-    console.log("[NETATMO] Authenticated!")
+  .on("warning", (warning) => {
+    console.warn(`[NETATMO] Netatmo Servers threw a warning: ${warning}`);
   })
+  .on("authenticated", () => {
+    console.log("[NETATMO] Authenticated!\n");
+  });
 
-api.getHomeData()
+api.getHomesData();

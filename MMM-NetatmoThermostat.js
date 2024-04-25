@@ -17,14 +17,13 @@ Module.register("MMM-NetatmoThermostat", {
     api: {
       client_id: null,
       client_secret: null,
-      access_token: null,
       refresh_token: null
     },
     display: {
       name: true,
       mode: true,
       battery: true,
-      firmware: true,
+      firmware: false,
       signal: true,
       tendency: true
     }
@@ -38,8 +37,9 @@ Module.register("MMM-NetatmoThermostat", {
     var wrapper = document.createElement("div");
     wrapper.id = "NETATMO";
 
-    var temp = document.createElement("div");
-    temp.id = "NETATMO_TEMP";
+    var thermostat = document.createElement("div");
+    thermostat.id = "NETATMO_THERMOSTAT";
+
     var zone1 = document.createElement("div");
     zone1.id = "NETATMO_ZONE1";
 
@@ -71,7 +71,7 @@ Module.register("MMM-NetatmoThermostat", {
     }
     zone1.appendChild(firmware);
 
-    temp.appendChild(zone1);
+    thermostat.appendChild(zone1);
 
     var zone2 = document.createElement("div");
     zone2.id = "NETATMO_ZONE2";
@@ -89,7 +89,7 @@ Module.register("MMM-NetatmoThermostat", {
     empty.id = "NETATMO_EMPTY";
     zone2.appendChild(empty);
 
-    temp.appendChild(zone2);
+    thermostat.appendChild(zone2);
 
     var zone3 = document.createElement("div");
     zone3.id = "NETATMO_ZONE3";
@@ -99,12 +99,8 @@ Module.register("MMM-NetatmoThermostat", {
     var batteryIcon = document.createElement("div");
     batteryIcon.id = "NETATMO_BATTERY_ICON";
     battery.appendChild(batteryIcon);
-    var batteryValue = document.createElement("div");
-    batteryValue.id = "NETATMO_BATTERY_VALUE";
-    battery.appendChild(batteryValue);
     if (!this.config.display.battery) {
       batteryIcon.className = "hidden";
-      batteryValue.className = "hidden";
     }
     zone3.appendChild(battery);
 
@@ -130,8 +126,8 @@ Module.register("MMM-NetatmoThermostat", {
     }
     zone3.appendChild(signal);
 
-    temp.appendChild(zone3);
-    wrapper.appendChild(temp);
+    thermostat.appendChild(zone3);
+    wrapper.appendChild(thermostat);
 
     return wrapper;
   },
@@ -168,11 +164,10 @@ Module.register("MMM-NetatmoThermostat", {
 
     var name = document.getElementById("NETATMO_NAME");
     var batteryIcon = document.getElementById("NETATMO_BATTERY_ICON");
-    var batteryValue = document.getElementById("NETATMO_BATTERY_VALUE");
     var signalIcon = document.getElementById("NETATMO_RADIO_ICON");
     var signalValue = document.getElementById("NETATMO_RADIO_VALUE");
     var tempTendencyIcon = document.getElementById("NETATMO_TEMP_TENDENCY_ICON");
-    var temp = document.getElementById("NETATMO_TEMP");
+    var thermostat = document.getElementById("NETATMO_THERMOSTAT");
     var tempValue = document.getElementById("NETATMO_TEMP_VALUE");
     var tempsetValue = document.getElementById("NETATMO_TEMPSET_VALUE");
     var tempsetIcon = document.getElementById("NETATMO_TEMPSET_ICON");
@@ -187,9 +182,7 @@ Module.register("MMM-NetatmoThermostat", {
     }
 
     if (this.config.display.mode) {
-      if ((this.Thermostat.mode === "schedule") || (this.Thermostat.mode === "manual")) {
-        tempsetValue.textContent = `${this.Thermostat.tempSet}°`;
-      }
+      tempsetValue.textContent = `${this.Thermostat.tempSet}°`;
       switch (this.Thermostat.mode) {
         case "schedule":
           tempsetIcon.className = "far fa-calendar-check";
@@ -205,6 +198,37 @@ Module.register("MMM-NetatmoThermostat", {
           tempsetIcon.className = "fas fa-thermometer-full";
           tempsetValue.textContent = "MAX";
           break;
+        case "away":
+          tempsetIcon.className = "fas fa-person-walking-arrow-right";
+          break;
+        case "hg":
+          tempsetIcon.className = "fas fa-snowflake";
+          break;
+      }
+    }
+
+    if (this.config.display.signal) {
+      signalIcon.className= "fas fa-signal";
+      signalValue.textContent = `${this.Thermostat.signalPercent}%`;
+    }
+
+    if (this.config.display.battery) {
+      switch (this.Thermostat.batteryState) {
+        case "full":
+          batteryIcon.className = "fa fa-battery-full";
+          break;
+        case "high":
+          batteryIcon.className = "fa fa-battery-three-quarters";
+          break;
+        case "medium":
+          batteryIcon.className = "fa fa-battery-half";
+          break;
+        case "low":
+          batteryIcon.className = "fa fa-battery-quarter";
+          break;
+        case "very_low":
+          batteryIcon.className = "fa fa-battery-empty";
+          break;
       }
     }
 
@@ -213,33 +237,14 @@ Module.register("MMM-NetatmoThermostat", {
       firmwareValue.textContent = this.Thermostat.firmware;
     }
 
-    if (this.config.display.signal) {
-      signalIcon.className= "fas fa-signal";
-      signalValue.textContent = `${this.Thermostat.signal}%`;
-    }
-
-    if (this.config.display.battery) {
-      batteryIcon.className = this.Thermostat.battery > 95
-        ? "fa fa-battery-full"
-        : this.Thermostat.battery >= 70
-          ? "fa fa-battery-three-quarters"
-          : this.Thermostat.battery >= 45
-            ? "fa fa-battery-half"
-            : this.Thermostat.battery >= 15
-              ? "fa fa-battery-quarter"
-              : "fa fa-battery-empty";
-      batteryValue.textContent = `${this.Thermostat.battery}%`;
-    }
-
-    if (this.Thermostat.heating) temp.className = "heating";
-    else temp.classList.remove("heating");
+    if (this.Thermostat.heating) thermostat.className = "heating";
+    else thermostat.classList.remove("heating");
   },
 
   tempTendency (tendency) {
-    let icon;
+    var icon = "fa fa-caret-right";
     if (tendency === 1 ) icon = "fa fa-caret-up";
     else if (tendency === 2) icon = "fa fa-caret-down";
-    else icon = "fa fa-caret-right";
     return icon;
   }
 });
