@@ -109,10 +109,10 @@ netatmo.prototype.authenticate = function (args, callback) {
       access_token = data.access_token;
 
       if (data.expires_in) {
-        setTimeout(this.authenticate_refresh.bind(this), data.expires_in * 1000, data.refresh_token);
+        setTimeout(this.authenticate_refresh.bind(this), (data.expires_in - 60) * 1000, data.refresh_token);
       }
 
-      this.emit("authenticated", data.expires_in);
+      this.emit("authenticated", data.expires_in - 60);
 
       if (callback) {
         return callback();
@@ -153,19 +153,21 @@ netatmo.prototype.authenticate_refresh = function (refresh_token) {
     })
     .then((data) => {
       if (data.error) {
+        access_token = null
         return this.handleFetchError(data, "Authenticate error", true);
       }
       access_token = data.access_token;
 
       if (data.expires_in) {
-        setTimeout(this.authenticate_refresh.bind(this), data.expires_in * 1000, data.refresh_token);
+        setTimeout(this.authenticate_refresh.bind(this), (data.expires_in - 60) * 1000, data.refresh_token);
       }
     
-      this.emit("refreshed", data.expires_in);
+      this.emit("refreshed", data.expires_in - 60);
 
       return this;
     })
     .catch ((error) => {
+      access_token = null
       return this.handleFetchError(error, "Authenticate refresh error");
     });
 
