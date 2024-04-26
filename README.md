@@ -6,7 +6,7 @@ This module display your Netatmo Thermostat informations on MirrorMirror²
 
 ## Screenshoot
 
-* Rest:
+* Cooling:
 
 ![](https://github.com/bugsounet/MMM-NetatmoThermostat/blob/dev/resources/A_Screenshot_0.png?raw=true)
 
