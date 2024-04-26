@@ -153,7 +153,7 @@ netatmo.prototype.authenticate_refresh = function (refresh_token) {
     })
     .then((data) => {
       if (data.error) {
-        access_token = null
+        access_token = null;
         return this.handleFetchError(data, "Authenticate error", true);
       }
       access_token = data.access_token;
@@ -167,7 +167,7 @@ netatmo.prototype.authenticate_refresh = function (refresh_token) {
       return this;
     })
     .catch ((error) => {
-      access_token = null
+      access_token = null;
       return this.handleFetchError(error, "Authenticate refresh error");
     });
 
