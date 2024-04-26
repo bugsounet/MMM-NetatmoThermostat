@@ -7,7 +7,7 @@
 logNT = (...args) => { /* do nothing */ };
 
 Module.register("MMM-NetatmoThermostat", {
-  requiresVersion: "2.26.0",
+  requiresVersion: "2.27.0",
   defaults: {
     debug: false,
     verbose: false,
@@ -238,7 +238,8 @@ Module.register("MMM-NetatmoThermostat", {
     }
 
     if (this.Thermostat.heating) thermostat.className = "heating";
-    else thermostat.classList.remove("heating");
+    else if (this.Thermostat.mode === "off") thermostat.className = "off";
+    else thermostat.className = "cooling";
   },
 
   tempTendency (tendency) {

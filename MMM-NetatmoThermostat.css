@@ -33,6 +33,16 @@
     color: #000;
   }
 
+  #NETATMO_THERMOSTAT.cooling {
+    background: #153a7c;
+    color: #ffff;
+  }
+
+  #NETATMO_THERMOSTAT.off {
+    background: #000;
+    color: #ffff;
+  }
+
   #NETATMO_VALUES {
     display: flex;
     align-items: center;
