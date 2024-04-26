@@ -15,6 +15,9 @@ This module display your Netatmo Thermostat informations on MirrorMirror²
 ![](https://github.com/bugsounet/MMM-NetatmoThermostat/blob/dev/resources/A_Screenshot_1.png?raw=true)
 
 ## Install
+**`MMM-NetatmoThermostat` need `MagicMirror²` v2.27.0 and above**
+
+Clone the module into your `MagicMirror` module folder and execute npm install in the module folder.
 
   ```sh
   cd ~/MagicMirror/modules
