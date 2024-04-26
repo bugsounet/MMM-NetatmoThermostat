@@ -4,8 +4,6 @@
  * bugsounet 2024
  */
  
-/* eslint-disable no-param-reassign */
-
 var util = require("util");
 var EventEmitter = require("events").EventEmitter;
 
