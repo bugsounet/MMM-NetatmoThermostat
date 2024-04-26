@@ -3,8 +3,6 @@
  * adapted for MMM-Netatmo-Thermostat (only)
  * bugsounet 2024
  */
- 
-/* eslint-disable no-param-reassign */
 
 var util = require("util");
 var EventEmitter = require("events").EventEmitter;
@@ -161,7 +159,7 @@ netatmo.prototype.authenticate_refresh = function (refresh_token) {
     .then((data) => {
       if (data.error) {
         access_token = null;
-        return this.handleFetchError(data, "Authenticate error", true);
+        return this.handleFetchError(data, "Authenticate refresh error", true);
       }
       access_token = data.access_token;
 

@@ -50,7 +50,7 @@ module.exports = NodeHelper.create({
     if (this.config.debug) logNT = (...args) => { console.log("[NETATMO]", ...args); };
     if (!this.config.home_id) return console.error("[NETATMO] home_id not set!");
     console.log("[NETATMO] Starting MMM-NetatmoThermostat module...");
-    logNT(this.config);
+    logNT("Config:", this.config);
     this.api = new netatmo(this.config.api);
     this.api
       .on("get-homestatus", (err, data) => this.getHomeStatus(err, data))
@@ -62,15 +62,15 @@ module.exports = NodeHelper.create({
         console.warn(`[NETATMO] threw a warning: ${error}`);
       })
       .on("authenticated", (expire) => {
-        console.log("[NETATMO] Authenticated!");
+        logNT("Authenticated!");
         let expire_at = moment(Date.now() + (expire*1000)).format("LLLL");
-        console.log("[NETATMO] Token Expire" , expire_at);
+        logNT("Token Expire" , expire_at);
         this.Authenticated = true;
       })
       .on("refreshed", (expire) => {
-        console.log("[NETATMO] Token refreshed!");
+        logNT("Token refreshed!");
         let expire_at = moment(Date.now() + (expire*1000)).format("LLLL");
-        console.log("[NETATMO] New Token Expire" , expire_at);
+        logNT("New Token Expire" , expire_at);
       });
 
     this.api.homeStatus({ home_id: this.config.home_id });
@@ -102,7 +102,7 @@ module.exports = NodeHelper.create({
           this.api.getHomesData({ home_id: this.config.home_id });
         }
       });
-    } else console.error("[NETATMO] no rooms found!", data.home);
+    } else console.error(`[NETATMO] room ${this.config.room_id} not found!`, data.home.rooms);
   },
 
   signalPercent (value) {
