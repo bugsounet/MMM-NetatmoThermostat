@@ -7,7 +7,7 @@
 logNT = (...args) => { /* do nothing */ };
 
 Module.register("MMM-NetatmoThermostat", {
-  requiresVersion: "2.26.0",
+  requiresVersion: "2.27.0",
   defaults: {
     debug: false,
     verbose: false,
