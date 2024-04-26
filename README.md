@@ -6,6 +6,14 @@ This module display your Netatmo Thermostat informations on MirrorMirror²
 
 ## Screenshoot
 
+* Rest:
+
+![](https://github.com/bugsounet/MMM-NetatmoThermostat/blob/dev/resources/A_Screenshot_0.png?raw=true)
+
+* Heating:
+
+![](https://github.com/bugsounet/MMM-NetatmoThermostat/blob/dev/resources/A_Screenshot_1.png?raw=true)
+
 ## Install
 
   ```sh
