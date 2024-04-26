@@ -45,12 +45,12 @@ module.exports = NodeHelper.create({
     }
   },
 
-  initialize (config) {
+  async initialize (config) {
     this.config = config;
     if (this.config.debug) logNT = (...args) => { console.log("[NETATMO]", ...args); };
-    if (!this.config.home_id) return console.error("[NETATMO] home_id not set!");
+    let checkErrorConfig = await this.checkConfig();
+    if (checkErrorConfig) return;
     console.log("[NETATMO] Starting MMM-NetatmoThermostat module...");
-    logNT("Config:", this.config);
     this.api = new netatmo(this.config.api);
     this.api
       .on("get-homestatus", (err, data) => this.getHomeStatus(err, data))
@@ -146,5 +146,40 @@ module.exports = NodeHelper.create({
     if (this.tempHistory.average > this.tempHistory.lastAverage) return 1;
     if (this.tempHistory.average < this.tempHistory.lastAverage) return 2;
     return 0;
+  },
+
+  checkConfig () {
+    var err = 0;
+    return new Promise ((resolve, reject) => {
+      if (!this.config.home_id) {
+        console.error("[NETATMO] 'home_id' configuration missing!");
+        err++;
+      }
+      if (isNaN(this.config.room_id)) {
+        console.error("[NETATMO] 'room_id' must be a Number!");
+        err++;
+      }
+      if (typeof (this.config.api) !== "object") {
+        console.error("[NETATMO] 'api: {...}' configuration missing!");
+        err++;
+      }
+      if (!this.config.api.client_id) {
+        console.error("[NETATMO] 'client_id' configuration missing in api!");
+        err++;
+      }
+      if (!this.config.api.client_secret) {
+        console.error("[NETATMO] 'client_secret' configuration missing in api!");
+        err++;
+      }
+      if (!this.config.api.refresh_token) {
+        console.error("[NETATMO] 'refresh_token' configuration missing in api!");
+        err++;
+      }
+
+      if (err) console.warn("[NETATMO] Config:", this.config);
+      else logNT("[NETATMO] Config:", this.config);
+
+      resolve(err);
+    });
   }
 });
