@@ -1,14 +1,44 @@
 {
-  "name": "MMM-Netatmo-Thermostat",
+  "name": "MMM-NetatmoThermostat",
   "version": "1.0.0",
-  "description": "Display Netatmo Thermostat State in MagicMirror",
-  "main": "MMM-Netatmo-Thermostat.js",
+  "rev": "240426",
+  "description": "Display Netatmo Thermostat State in MagicMirror²",
+  "main": "MMM-NetatmoThermostat.js",
+  "scripts": {
+    "preinstall": "installer/preinstall.sh",
+    "postinstall": "installer/postinstall.sh -m",
+    "update": "installer/update.sh",
+    "reset": "git reset --hard",
+    "clean": "rm -rf node_modules package-lock.json",
+    "lint": "eslint *.js installer/*.js components/*.js --config eslint.config.js",
+    "lint:fix": "eslint *.js installer/*.js components/*.js --config eslint.config.js --fix",
+    "test": "npm run lint",
+    "test:minify": "cd installer && node minify.js",
+    "setup": "node --no-deprecation installer/setup"
+  },
+  "keywords": [
+    "netatmo",
+    "thermostat",
+    "smart home"
+  ],
   "author": "@bugsounet",
   "license": "MIT",
-  "scripts": {
-    "setup": "node setup"
+  "bugs": {
+    "url": "https://github.com/bugsounet/MMM-NetatmoThermostat"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bugsounet/MMM-NetatmoThermostat"
+  },
+  "homepage": "https://github.com/bugsounet/MMM-NetatmoThermostat",
   "dependencies": {
-    "netatmo": "2.4.0"
+    "esbuild": "^0.20.2",
+    "glob": "^10.3.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^8.57.0",
+    "@stylistic/eslint-plugin": "^1.7.2",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1"
   }
 }
