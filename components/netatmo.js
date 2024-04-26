@@ -41,7 +41,14 @@ netatmo.prototype.handleFetchError = function (err, message, critical) {
   if (typeof (err) === "object") {
     if (err.error && err.error_description) errorMessage = `${err.error} (${err.error_description})`;
     else if (err.cause) errorMessage = `${err.message} (${err.cause})`;
-    else  errorMessage = err.toString();
+    else if (typeof (err.error) === "object") {
+      if (err.error.code && err.error.message) errorMessage = `${err.error.message}`;
+      else errorMessage = JSON.stringify(err.error);
+    }
+    else if (typeof (err.error) === "string") {
+      errorMessage = err.error;
+    }
+    else errorMessage = JSON.stringify(err);
   } else {
     errorMessage = "No error response -- Received: $err";
   }
