@@ -3,7 +3,7 @@
  * adapted for MMM-Netatmo-Thermostat (only)
  * bugsounet 2024
  */
- 
+
 var util = require("util");
 var EventEmitter = require("events").EventEmitter;
 
