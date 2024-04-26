@@ -49,6 +49,7 @@ module.exports = NodeHelper.create({
     this.config = config;
     if (this.config.debug) logNT = (...args) => { console.log("[NETATMO]", ...args); };
     if (!this.config.home_id) return console.error("[NETATMO] home_id not set!");
+    if (isNaN(this.config.room_id)) return console.error("[NETATMO] room_id must be a Number!");
     console.log("[NETATMO] Starting MMM-NetatmoThermostat module...");
     logNT("Config:", this.config);
     this.api = new netatmo(this.config.api);
