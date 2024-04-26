@@ -238,8 +238,7 @@ Module.register("MMM-NetatmoThermostat", {
     }
 
     if (this.Thermostat.heating) thermostat.className = "heating";
-    else if (this.Thermostat.mode === "off") thermostat.className = "off";
-    else thermostat.className = "cooling";
+    else thermostat.classList.remove("heating");
   },
 
   tempTendency (tendency) {
