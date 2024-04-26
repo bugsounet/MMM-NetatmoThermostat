@@ -27,8 +27,9 @@
     border: solid;
   }
 
+  /* use netatmo color !important for netatmo */
   #NETATMO_THERMOSTAT.heating {
-    background: linear-gradient(to bottom,#e67e22 0,#ffae00 120%);
+    background: #ff8500;
     color: #000;
   }
 
