@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/bugsounet/MMM-NetatmoThermostat",
   "dependencies": {
-    "esbuild": "^0.21.2",
+    "esbuild": "^0.21.3",
     "glob": "^10.3.15"
   },
   "devDependencies": {
