@@ -5,7 +5,10 @@
  */
 
 var util = require("util");
+var fs = require("fs");
+var path = require("path");
 var EventEmitter = require("events").EventEmitter;
+var moment = require("moment");
 
 const BASE_URL = "https://api.netatmo.net";
 
@@ -76,19 +79,34 @@ netatmo.prototype.authenticate = function (args, callback) {
     return this;
   }
 
+  client_id = args.client_id;
+
   if (!args.client_secret) {
     this.emit("error", new Error("Authenticate 'client_secret' not set."));
     return this;
   }
 
-  if (!args.refresh_token) {
-    this.emit("error", new Error("Authenticate 'refresh_token' not set."));
-    return this;
-  }
-
-  client_id = args.client_id;
   client_secret = args.client_secret;
-  refresh_token = args.refresh_token;
+
+  var file = path.resolve(__dirname, "../token.json");
+
+  if (fs.existsSync(file)) {
+    let tokenFile = JSON.parse(fs.readFileSync(file));
+    console.log("[NETATMO] Use token.json for Authenticate");
+    refresh_token = tokenFile.refresh_token;
+    if (!refresh_token) {
+      this.emit("error", new Error("Authenticate 'refresh_token' not found in token.json file."));
+      return this;
+    }
+  } else {
+    console.log("[NETATMO] Use config for Authenticate");
+    if (!args.refresh_token) {
+      this.emit("error", new Error("Authenticate 'refresh_token' not set."));
+      return this;
+    } else {
+      refresh_token = args.refresh_token;
+    }
+  }
 
   const params = new URLSearchParams();
   params.append("grant_type", "refresh_token");
@@ -111,6 +129,8 @@ netatmo.prototype.authenticate = function (args, callback) {
       if (data.error) {
         return this.handleFetchError(data, "Authenticate error", true);
       }
+
+      let token = this.writeToken(data);
       access_token = data.access_token;
 
       if (data.expires_in) {
@@ -161,12 +181,14 @@ netatmo.prototype.authenticate_refresh = function (refresh_token) {
         access_token = null;
         return this.handleFetchError(data, "Authenticate refresh error", true);
       }
+
+      let token = this.writeToken(data);
       access_token = data.access_token;
 
       if (data.expires_in) {
         setTimeout(this.authenticate_refresh.bind(this), (data.expires_in - 60) * 1000, data.refresh_token);
       }
-    
+
       this.emit("refreshed", data.expires_in - 60);
 
       return this;
@@ -297,6 +319,23 @@ netatmo.prototype.homeStatus = function (options, callback) {
     });
 
   return this;
+};
+
+/**
+ * Write Token to token.json file
+ * @param output
+ * @returns {*}
+ */
+
+netatmo.prototype.writeToken = function (output) {
+  try {
+    var file = path.resolve(__dirname, "../token.json");
+    fs.writeFileSync(file, JSON.stringify(output));
+    console.log("[NETATMO] token.json was written successfully");
+    return output;
+  } catch (error) {
+    return this.handleFetchError(error, "writeToken error");
+  }
 };
 
 module.exports = netatmo;
