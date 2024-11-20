@@ -8,7 +8,6 @@ var util = require("util");
 var fs = require("fs");
 var path = require("path");
 var EventEmitter = require("events").EventEmitter;
-var moment = require("moment");
 
 const BASE_URL = "https://api.netatmo.net";
 
@@ -130,7 +129,7 @@ netatmo.prototype.authenticate = function (args, callback) {
         return this.handleFetchError(data, "Authenticate error", true);
       }
 
-      let token = this.writeToken(data);
+      this.writeToken(data);
       access_token = data.access_token;
 
       if (data.expires_in) {
@@ -144,7 +143,7 @@ netatmo.prototype.authenticate = function (args, callback) {
       }
       return this;
     })
-    .catch ((error) => {
+    .catch((error) => {
       return this.handleFetchError(error, "Authenticate error", true);
     });
 
@@ -182,7 +181,7 @@ netatmo.prototype.authenticate_refresh = function (refresh_token) {
         return this.handleFetchError(data, "Authenticate refresh error", true);
       }
 
-      let token = this.writeToken(data);
+      this.writeToken(data);
       access_token = data.access_token;
 
       if (data.expires_in) {
@@ -193,7 +192,7 @@ netatmo.prototype.authenticate_refresh = function (refresh_token) {
 
       return this;
     })
-    .catch ((error) => {
+    .catch((error) => {
       access_token = null;
       return this.handleFetchError(error, "Authenticate refresh error");
     });
@@ -243,12 +242,12 @@ netatmo.prototype.getHomesData = function (options, callback) {
       this.emit("get-homesdata", data.error, data.body);
 
       if (callback) {
-        return callback(data.error, body.body);
+        return callback(data.error, data.body);
       }
 
       return this;
     })
-    .catch ((error) => {
+    .catch((error) => {
       return this.handleFetchError(error, "getHomesData error");
     });
 
@@ -314,7 +313,7 @@ netatmo.prototype.homeStatus = function (options, callback) {
 
       return this;
     })
-    .catch ((error) => {
+    .catch((error) => {
       return this.handleFetchError(error, "homeStatus error");
     });
 
