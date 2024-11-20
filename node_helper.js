@@ -7,13 +7,13 @@
 
 var NodeHelper = require("node_helper");
 var moment = require("moment");
-var netatmo = require("./components/netatmo.js");
+var netatmo = require("./components/netatmo");
 
-logNT = (...args) => { /* do nothing ! */ };
+var logNT = () => { /* do nothing ! */ };
 
 module.exports = NodeHelper.create({
   start () {
-    this.thermostat= {
+    this.thermostat = {
       name: "NATherm1",
       batteryState: null,
       temp: null,
@@ -54,7 +54,7 @@ module.exports = NodeHelper.create({
     this.api = new netatmo(this.config.api);
     this.api
       .on("get-homestatus", (err, data) => this.getHomeStatus(err, data))
-      .on("get-homesdata", (err, data) => this.getHomesData(err,data))
+      .on("get-homesdata", (err, data) => this.getHomesData(err, data))
       .on("error", (error) => {
         console.error(`[NETATMO] threw an error: ${error}`);
       })
@@ -63,19 +63,19 @@ module.exports = NodeHelper.create({
       })
       .on("authenticated", (expire) => {
         logNT("Authenticated!");
-        let expire_at = moment(Date.now() + (expire*1000)).format("LLLL");
-        logNT("Token Expire" , expire_at);
+        let expire_at = moment(Date.now() + (expire * 1000)).format("LLLL");
+        logNT("Token Expire", expire_at);
         this.Authenticated = true;
       })
       .on("refreshed", (expire) => {
         logNT("Token refreshed!");
-        let expire_at = moment(Date.now() + (expire*1000)).format("LLLL");
-        logNT("New Token Expire" , expire_at);
+        let expire_at = moment(Date.now() + (expire * 1000)).format("LLLL");
+        logNT("New Token Expire", expire_at);
       });
 
     this.api.homeStatus({ home_id: this.config.home_id });
 
-    setInterval(()=> {
+    setInterval(() => {
       if (this.Authenticated) { // auth only ?
         logNT("Updating...");
         this.api.homeStatus({ home_id: this.config.home_id });
@@ -85,7 +85,7 @@ module.exports = NodeHelper.create({
 
   getHomeStatus (err, data) {
     if (this.config.verbose) logNT("HomeStatus:", data.home);
-    if (data.home.rooms.length && data.home.rooms.length-1 >= this.config.room_id) {
+    if (data.home.rooms.length && data.home.rooms.length - 1 >= this.config.room_id) {
       this.thermostat.temp = data.home.rooms[this.config.room_id].therm_measured_temperature;
       this.thermostat.tempSet = data.home.rooms[this.config.room_id].therm_setpoint_temperature;
       this.thermostat.mode = data.home.rooms[this.config.room_id].therm_setpoint_mode;
@@ -109,14 +109,14 @@ module.exports = NodeHelper.create({
     if (isNaN(value)) return 0;
     const min = 50;
     const max = 90;
-    var percent = 100 - ((value - min)/(max-min)) * 100;
+    var percent = 100 - ((value - min) / (max - min)) * 100;
     if (percent > 100) percent = 100;
     if (percent < 0) percent = 0;
     const result = parseInt(percent.toFixed(0));
     return result;
   },
 
-  getHomesData (err,data) {
+  getHomesData (err, data) {
     if (this.config.verbose) logNT("getHomesData:", data);
     const home = data.homes[0];
     home?.modules.forEach((module) => {
@@ -131,17 +131,18 @@ module.exports = NodeHelper.create({
   averageTemp (temp) {
     if (!temp) return;
     let average = 0;
+
     /** do Array of last 10 Temp **/
-    if (this.tempHistory.data.length >= 10) this.tempHistory.data.splice(0,1);
+    if (this.tempHistory.data.length >= 10) this.tempHistory.data.splice(0, 1);
     this.tempHistory.data.push(temp);
 
     /** do the average **/
     this.tempHistory.data.forEach((value) => {
       average += value;
     });
-    average = (average/this.tempHistory.data.length).toFixed(2);
-    this.tempHistory.lastAverage = this.tempHistory.average ? this.tempHistory.average: average;
-    this.tempHistory.average= average;
+    average = (average / this.tempHistory.data.length).toFixed(2);
+    this.tempHistory.lastAverage = this.tempHistory.average ? this.tempHistory.average : average;
+    this.tempHistory.average = average;
     logNT("tempHistory:", this.tempHistory);
     if (this.tempHistory.average > this.tempHistory.lastAverage) return 1;
     if (this.tempHistory.average < this.tempHistory.lastAverage) return 2;
@@ -150,7 +151,7 @@ module.exports = NodeHelper.create({
 
   checkConfig () {
     var err = 0;
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve) => {
       if (!this.config.home_id) {
         console.error("[NETATMO] 'home_id' configuration missing!");
         err++;
