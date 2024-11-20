@@ -3,11 +3,10 @@
 
 const fs = require("fs");
 const path = require("path");
-var netatmo = require("../components/netatmo.js");
+var netatmo = require("../components/netatmo");
 
 let file = path.resolve(__dirname, "../../../config/config.js");
 let found = false;
-let config = {};
 
 if (fs.existsSync(file)) {
   var MMConfig = require(file);
@@ -19,6 +18,7 @@ if (fs.existsSync(file)) {
 
 for (let [nb, module] of Object.entries(MMModules)) {
   if (module.module === "MMM-NetatmoThermostat") {
+    console.log(`Found: MMM-NetatmoThermostat -- module id:${nb}`);
     if (!module.config.api.client_id) {
       console.log("client_id not defined in config.js");
       process.exit();
