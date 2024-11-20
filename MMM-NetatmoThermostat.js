@@ -4,7 +4,7 @@
  * By bugsounet ©2024
  * MIT Licensed.
  */
-logNT = (...args) => { /* do nothing */ };
+var logNT = () => { /* do nothing */ };
 
 Module.register("MMM-NetatmoThermostat", {
   requiresVersion: "2.27.0",
@@ -46,10 +46,10 @@ Module.register("MMM-NetatmoThermostat", {
     var tempset = document.createElement("div");
     tempset.id = "NETATMO_TEMPSET";
     var tempsetIcon = document.createElement("div");
-    tempsetIcon.id= "NETATMO_TEMPSET_ICON";
+    tempsetIcon.id = "NETATMO_TEMPSET_ICON";
     tempset.appendChild(tempsetIcon);
     var tempsetValue = document.createElement("div");
-    tempsetValue.id= "NETATMO_TEMPSET_VALUE";
+    tempsetValue.id = "NETATMO_TEMPSET_VALUE";
     tempset.appendChild(tempsetValue);
     if (!this.config.display.mode) {
       tempsetIcon.className = "hidden";
@@ -140,15 +140,15 @@ Module.register("MMM-NetatmoThermostat", {
   },
 
   socketNotificationReceived (noti, payload) {
-    switch(noti) {
+    switch (noti) {
       case "DATA":
         this.updateData(payload);
         break;
     }
   },
 
-  notificationReceived (noti, payload) {
-    switch(noti) {
+  notificationReceived (noti) {
+    switch (noti) {
       case "DOM_OBJECTS_CREATED":
         if (this.config.debug) logNT = (...args) => { console.log("[NETATMO]", ...args); };
         if (this.config.updateInterval < 30000) this.config.updateInterval = 30000;
@@ -178,7 +178,7 @@ Module.register("MMM-NetatmoThermostat", {
 
     tempValue.textContent = `${this.Thermostat.temp.toFixed(1)}°`;
     if (this.config.display.tendency) {
-      tempTendencyIcon.className= this.tempTendency(this.Thermostat.tendency);
+      tempTendencyIcon.className = this.tempTendency(this.Thermostat.tendency);
     }
 
     if (this.config.display.mode) {
@@ -208,7 +208,7 @@ Module.register("MMM-NetatmoThermostat", {
     }
 
     if (this.config.display.signal) {
-      signalIcon.className= "fas fa-signal";
+      signalIcon.className = "fas fa-signal";
       signalValue.textContent = `${this.Thermostat.signalPercent}%`;
     }
 
@@ -233,7 +233,7 @@ Module.register("MMM-NetatmoThermostat", {
     }
 
     if (this.config.display.firmware) {
-      firmwareIcon.className= "fas fa-microchip";
+      firmwareIcon.className = "fas fa-microchip";
       firmwareValue.textContent = this.Thermostat.firmware;
     }
 
@@ -243,7 +243,7 @@ Module.register("MMM-NetatmoThermostat", {
 
   tempTendency (tendency) {
     var icon = "fa fa-caret-right";
-    if (tendency === 1 ) icon = "fa fa-caret-up";
+    if (tendency === 1) icon = "fa fa-caret-up";
     else if (tendency === 2) icon = "fa fa-caret-down";
     return icon;
   }
