@@ -1,7 +1,7 @@
 {
   "name": "MMM-NetatmoThermostat",
-  "version": "1.2.0",
-  "rev": "240701",
+  "version": "1.2.1",
+  "rev": "241120",
   "description": "Display Netatmo Thermostat State in MagicMirror²",
   "main": "MMM-NetatmoThermostat.js",
   "scripts": {
