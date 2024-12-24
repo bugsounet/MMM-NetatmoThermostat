@@ -1,2 +1,5 @@
 /node_modules/
 /token.json
+/MMM-NetatmoThermostat.js
+/components/netatmo.js
+/node_helper.js
