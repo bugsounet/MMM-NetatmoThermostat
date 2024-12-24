@@ -1,30 +1,13 @@
 {
   "name": "MMM-NetatmoThermostat",
   "version": "1.2.2",
-  "rev": "241224",
   "description": "Display Netatmo Thermostat State in MagicMirror²",
-  "main": "MMM-NetatmoThermostat.js",
-  "scripts": {
-    "preinstall": "installer/preinstall.sh",
-    "postinstall": "installer/postinstall.sh -m",
-    "update": "installer/update.sh",
-    "reset": "rm -f *.js components/*.js && git reset --hard",
-    "clean": "rm -rf node_modules package-lock.json",
-    "dev": "cd installer && node dev.js",
-    "dev:src": "cd installer && node src.js",
-    "lint": "eslint . --config eslint.config.mjs",
-    "lint:fix": "eslint . --config eslint.config.mjs --fix",
-    "test": "npm run lint",
-    "test:minify": "cd installer && node minify.js",
-    "setup": "node --no-deprecation installer/setup"
-  },
   "keywords": [
     "netatmo",
     "thermostat",
     "smart home"
   ],
-  "author": "@bugsounet",
-  "license": "MIT",
+  "homepage": "https://github.com/bugsounet/MMM-NetatmoThermostat",
   "bugs": {
     "url": "https://github.com/bugsounet/MMM-NetatmoThermostat"
   },
@@ -32,7 +15,23 @@
     "type": "git",
     "url": "https://github.com/bugsounet/MMM-NetatmoThermostat"
   },
-  "homepage": "https://github.com/bugsounet/MMM-NetatmoThermostat",
+  "license": "MIT",
+  "author": "@bugsounet",
+  "main": "MMM-NetatmoThermostat.js",
+  "scripts": {
+    "clean": "rm -rf node_modules package-lock.json",
+    "dev": "cd installer && node dev.js",
+    "dev:src": "cd installer && node src.js",
+    "lint": "eslint . --config eslint.config.mjs",
+    "lint:fix": "eslint . --config eslint.config.mjs --fix",
+    "postinstall": "installer/postinstall.sh -m",
+    "preinstall": "installer/preinstall.sh",
+    "reset": "rm -f *.js components/*.js && git reset --hard",
+    "setup": "node --no-deprecation installer/setup",
+    "test": "npm run lint",
+    "test:minify": "cd installer && node minify.js",
+    "update": "installer/update.sh"
+  },
   "dependencies": {
     "esbuild": "^0.24.2",
     "glob": "^11.0.0"
@@ -42,5 +41,6 @@
     "eslint": "^9.17.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-package-json": "^0.18.0"
-  }
+  },
+  "rev": "241224"
 }
