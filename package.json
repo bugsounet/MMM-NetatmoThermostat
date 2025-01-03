@@ -1,6 +1,6 @@
 {
   "name": "MMM-NetatmoThermostat",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Display Netatmo Thermostat State in MagicMirror²",
   "keywords": [
     "netatmo",
@@ -42,5 +42,5 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-package-json": "^0.18.0"
   },
-  "rev": "241224"
+  "rev": "250103"
 }
