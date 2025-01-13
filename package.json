@@ -37,7 +37,7 @@
     "fdir": "^6.4.2"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^2.12.1",
+    "@stylistic/eslint-plugin": "^2.13.0",
     "eslint": "^9.18.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-package-json": "^0.19.0"
